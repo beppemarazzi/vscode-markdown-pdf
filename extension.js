@@ -423,12 +423,22 @@ function exportPdf(data, filename, type, uri) {
           } else {
             landscape_option = false;
           }
+          const headerTemplateFilename = vscode.workspace.getConfiguration('markdown-pdf', uri)['headerTemplateFile'];
+          var headerTemplate = headerTemplateFilename !== '' ? transformTemplate(readFile(fixPath(uri, headerTemplateFilename))) : '';
+          if(headerTemplate === ''){
+            headerTemplate = transformTemplate(vscode.workspace.getConfiguration('markdown-pdf', uri)['headerTemplate'] || '');
+          }
+          const footerTemplateFilename = vscode.workspace.getConfiguration('markdown-pdf', uri)['footerTemplateFile'];
+          var footerTemplate = footerTemplateFilename !== '' ? transformTemplate(readFile(fixPath(uri, footerTemplateFilename))) : '';
+          if(footerTemplate === ''){
+            footerTemplate = transformTemplate(vscode.workspace.getConfiguration('markdown-pdf', uri)['footerTemplate'] || '');
+          }
           var options = {
             path: exportFilename,
             scale: vscode.workspace.getConfiguration('markdown-pdf', uri)['scale'],
             displayHeaderFooter: vscode.workspace.getConfiguration('markdown-pdf', uri)['displayHeaderFooter'],
-            headerTemplate: transformTemplate(vscode.workspace.getConfiguration('markdown-pdf', uri)['headerTemplate'] || ''),
-            footerTemplate: transformTemplate(vscode.workspace.getConfiguration('markdown-pdf', uri)['footerTemplate'] || ''),
+            headerTemplate,
+            footerTemplate,
             printBackground: vscode.workspace.getConfiguration('markdown-pdf', uri)['printBackground'],
             landscape: landscape_option,
             pageRanges: vscode.workspace.getConfiguration('markdown-pdf', uri)['pageRanges'] || '',
@@ -783,6 +793,15 @@ function fixHref(resource, href) {
   } catch (error) {
     showErrorMessage('fixHref()', error);
   }
+}
+
+function fixPath(resource, filePath){
+    // Use href as file URI if it is absolute
+    if (path.isAbsolute(filePath)) {
+      return filePath;
+    }
+    let root = vscode.workspace.getWorkspaceFolder(resource);
+    return path.join(root.uri.fsPath, filePath);
 }
 
 function checkPuppeteerBinary() {

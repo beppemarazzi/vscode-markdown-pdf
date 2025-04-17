@@ -2,7 +2,7 @@
   "name": "markdown-pdf",
   "displayName": "Markdown PDF",
   "description": "Convert Markdown to PDF",
-  "version": "1.5.0",
+  "version": "1.5.0-gm-patch",
   "publisher": "yzane",
   "icon": "images/icon.png",
   "engines": {
@@ -321,10 +321,22 @@
           "description": "pdf only. HTML template for the print header.",
           "scope": "resource"
         },
+        "markdown-pdf.headerTemplateFile": {
+          "type": "string",
+          "default": "",
+          "description": "pdf only. HTML template file path for the print header.",
+          "scope": "resource"
+        },
         "markdown-pdf.footerTemplate": {
           "type": "string",
           "default": "<div style=\"font-size: 9px; margin: 0 auto;\"> <span class='pageNumber'></span> / <span class='totalPages'></span></div>",
           "description": "pdf only. HTML template for the print footer.",
+          "scope": "resource"
+        },
+        "markdown-pdf.footerTemplateFile": {
+          "type": "string",
+          "default": "",
+          "description": "pdf only. HTML template file path for the print footer.",
           "scope": "resource"
         },
         "markdown-pdf.printBackground": {
