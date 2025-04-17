@@ -219,6 +219,9 @@ function convertMarkdownToHtml(filename, type, text) {
   // checkbox
   md.use(require('markdown-it-checkbox'));
 
+  // GM: GH alerts
+  md.use(require('markdown-it-github-alert').alertPlugin);
+
   // emoji
   var emoji_f = setBooleanValue(matterParts.data.emoji, vscode.workspace.getConfiguration('markdown-pdf')['emoji']);
   if (emoji_f) {
@@ -703,6 +706,12 @@ function readStyles(uri) {
     // 1. read the style of the vscode.
     if (includeDefaultStyles) {
       filename = path.join(__dirname, 'styles', 'markdown.css');
+      style += makeCss(filename);
+    }
+
+    // GM 1.bis read the style for GH alerts
+    if (includeDefaultStyles) {
+      filename = path.join(__dirname, 'styles', 'github-alert.css');
       style += makeCss(filename);
     }
 
