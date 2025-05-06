@@ -256,6 +256,11 @@ function convertMarkdownToHtml(filename, type, text) {
 
   // GM: GH alerts
   md.use(require('markdown-it-github-alert').alertPlugin);
+  
+  // GM: latex
+  const kt = require('katex');
+  const tm = require('markdown-it-texmath').use(kt);
+  md.use(tm, {delimiters:'dollars'} );
 
   // emoji
   var emoji_f = setBooleanValue(matterParts.data.emoji, vscode.workspace.getConfiguration('markdown-pdf')['emoji']);
@@ -744,9 +749,12 @@ function readStyles(uri) {
       style += makeCss(filename);
     }
 
-    // GM 1.bis read the style for GH alerts
+    // GM 1.bis read the style for GH alerts and latex
     if (includeDefaultStyles) {
       filename = path.join(__dirname, 'styles', 'github-alert.css');
+      style += makeCss(filename);
+      
+      filename = path.join(__dirname, 'node_modules/katex/dist/katex.min.css');
       style += makeCss(filename);
     }
 
