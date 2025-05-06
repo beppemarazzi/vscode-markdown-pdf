@@ -34,6 +34,41 @@ function deactivate() {
 }
 exports.deactivate = deactivate;
 
+async function cli(mdFilename, pdfFilename) {
+  try{
+    init();
+    mdFilename = fixPath("", mdFilename);
+    pdfFilename = fixPath("", pdfFilename);
+    const uri = vscode.Uri.file(mdFilename);
+    const type = 'pdf';
+    var text = readFile(mdFilename);
+    if(text.length > 0){
+      console.log("convertMarkdownToHtml " + mdFilename);
+      var content = convertMarkdownToHtml(mdFilename, type, text);
+      if(content){
+        console.log("makeHtml...");
+        var html = makeHtml(content, uri);
+        if(html){
+          console.log("exportPdf " + pdfFilename);
+          await exportPdf(html, pdfFilename, type, uri);
+          console.log("Done.");
+          return true;
+        } else {
+          console.error("makeHtml output is undefined");  
+        }
+      } else {
+        console.error("convertMarkdownToHtml output is undefined");
+      }
+    } else {
+      console.error("Input .md filename is empty or missing");
+    }    
+  } catch (error) {
+    showErrorMessage('cli()', error);
+  }
+  return false;
+}
+exports.cli = cli;
+
 async function markdownPdf(option_type) {
 
   try {
@@ -405,7 +440,7 @@ function exportPdf(data, filename, type, uri) {
           // Setting Up Chrome Linux Sandbox
           // https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#setting-up-chrome-linux-sandbox
       };
-        const browser = await puppeteer.launch(options);
+      const browser = await puppeteer.launch(options);
         const page = await browser.newPage();
         await page.setDefaultTimeout(0);
         await page.goto(vscode.Uri.file(tmpfilename).toString(), { waitUntil: 'networkidle0' });
